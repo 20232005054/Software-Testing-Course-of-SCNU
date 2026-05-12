@@ -147,20 +147,17 @@ try:
     
     # 8. 选择右侧文本是"商品类型"的选项，等待3秒
     print("\n✅ 步骤8: 选择文本为'商品类型'的选项")
-    try:
-        right_select.select_by_visible_text("商品类型")
-        print("   已选中'商品类型'选项")
-    except Exception as e:
-        print(f"   选择'商品类型'失败: {e}")
-        # 尝试模糊匹配
-        try:
-            for option in right_select.options:
-                if "商品类型" in option.text:
-                    right_select.select_by_visible_text(option.text)
-                    print(f"   已选中包含'商品类型'的选项: {option.text}")
-                    break
-        except Exception as e2:
-            print(f"   模糊匹配也失败: {e2}")
+    # 注意：ECShop的选项文本前有空格，需要模糊匹配
+    selected = False
+    for option in right_select.options:
+        if "商品类型" in option.text:
+            right_select.select_by_visible_text(option.text)
+            print(f"   已选中'商品类型'选项（完整文本: '{option.text}'）")
+            selected = True
+            break
+    
+    if not selected:
+        print("   ⚠️ 未找到'商品类型'选项")
     
     sleep(3)
     

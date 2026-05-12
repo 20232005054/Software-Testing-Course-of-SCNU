@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # 实验03 - XPATH 高级定位
 
 # 导入必要的模块
@@ -82,15 +83,32 @@ try:
     
     # 7. 输入高级搜索页面里的关键字100，等待3秒
     print("✅ 步骤7: 输入关键字100")
+    
+    # 等待页面加载完成
+    sleep(2)
+    
     try:
-        keyword_input = driver.find_element(By.NAME, "keywords")
+        # 使用ID定位（根据你提供的HTML）
+        keyword_input = driver.find_element(By.ID, "keywords")
     except:
         try:
-            keyword_input = driver.find_element(By.ID, "keywords")
+            keyword_input = driver.find_element(By.NAME, "keywords")
         except:
-            keyword_input = driver.find_element(By.XPATH, "//input[@name='keywords']")
+            keyword_input = driver.find_element(By.XPATH, "//input[@id='keywords']")
+    
+    # 确保输入框可见并可交互
+    driver.execute_script("arguments[0].scrollIntoView();", keyword_input)
+    sleep(0.5)
+    
+    # 清空并输入
     keyword_input.clear()
+    sleep(0.5)
     keyword_input.send_keys("100")
+    
+    # 验证输入是否成功
+    input_value = keyword_input.get_attribute("value")
+    print(f"   输入框当前值: {input_value}")
+    
     sleep(3)
     
     # 8. 点击"立即搜索"按钮，等待3秒
@@ -108,22 +126,59 @@ try:
     # 9. 点击"夏新N7手机图标"，等待3秒
     print("✅ 步骤9: 点击夏新N7手机")
     try:
-        # 先尝试在当前搜索结果中找夏新
-        product_link = driver.find_element(By.PARTIAL_LINK_TEXT, "夏新")
+        # 方法1：使用XPATH避免中文编码问题
+        product_link = driver.find_element(By.XPATH, "//a[contains(@href,'goods.php') and contains(text(),'夏新')]")
+        print("   找到夏新商品（XPATH方式）")
     except:
         try:
-            # 如果当前页面没有，直接搜索夏新N7
-            driver.get("http://localhost/upload/search.php?keywords=夏新N7")
+            # 方法2：如果当前页面没有，重新进行高级搜索（复用步骤7和步骤8的逻辑）
+            print("   当前页面未找到商品，尝试搜索夏新N7...")
+            
+            # 打开高级搜索页面
+            driver.get("http://localhost/upload/search.php")
             sleep(2)
-            product_link = driver.find_element(By.PARTIAL_LINK_TEXT, "夏新")
-        except:
+            
+            # 定位关键字输入框（复用步骤7的逻辑）
             try:
-                # 尝试找任意一个商品
-                product_link = driver.find_element(By.XPATH, "//div[@class='goods_item']//a[contains(@href,'goods.php')]")
-                print("   (未找到夏新N7，点击搜索结果中的第一个商品)")
+                keyword_input = driver.find_element(By.ID, "keywords")
             except:
-                print("   ⚠️  未找到商品，跳过此步骤")
-                product_link = None
+                try:
+                    keyword_input = driver.find_element(By.NAME, "keywords")
+                except:
+                    keyword_input = driver.find_element(By.XPATH, "//input[@id='keywords']")
+            
+            # 确保输入框可见并可交互
+            driver.execute_script("arguments[0].scrollIntoView();", keyword_input)
+            sleep(0.5)
+            
+            # 清空并输入"夏新N7"（使用JavaScript避免中文乱码）
+            keyword_input.clear()
+            sleep(0.5)
+            driver.execute_script("arguments[0].value = '夏新N7';", keyword_input)
+            
+            # 验证输入是否成功
+            input_value = keyword_input.get_attribute("value")
+            print(f"   输入框当前值: {input_value}")
+            sleep(1)
+            
+            # 点击立即搜索按钮（复用步骤8的逻辑）
+            try:
+                search_button = driver.find_element(By.XPATH, "//input[@type='submit' and @value='立即搜索']")
+            except:
+                try:
+                    search_button = driver.find_element(By.XPATH, "//button[contains(text(),'搜索')]")
+                except:
+                    search_button = driver.find_element(By.XPATH, "//input[@type='submit']")
+            search_button.click()
+            sleep(3)
+            
+            # 搜索完成后，再次尝试定位商品（复用方法1的XPATH）
+            product_link = driver.find_element(By.XPATH, "//a[contains(@href,'goods.php') and contains(text(),'夏新')]")
+            print("   搜索后找到夏新商品")
+            
+        except Exception as e:
+            print(f"   ⚠️  未找到商品: {e}")
+            product_link = None
     
     if product_link:
         product_link.click()

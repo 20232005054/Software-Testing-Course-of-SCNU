@@ -27,11 +27,22 @@ htmlcov/
 *.log
 screenshots/
 geckodriver.log
+chromedriver.exe
+chromedriver
 
 # 系统文件
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# WampServer 和 ECShop
+ECShop/
+wamp/
+D:/wamp/
+
+# 临时文件和截图
+screenshot.png
+*.tmp
 
 # 实验材料和文档（保留在仓库中，但可根据需要调整）
 # 实验模块一/

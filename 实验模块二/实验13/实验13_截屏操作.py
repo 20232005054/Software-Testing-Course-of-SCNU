@@ -208,29 +208,51 @@ try:
     print("\n✅ 步骤7: 点击登录按钮并截屏")
     try:
         # 在商品详情页查找登录按钮
+        # ECShop的登录按钮可能是图片或空文本链接
         login_link = None
         try:
-            login_link = driver.find_element(By.LINK_TEXT, "登录")
+            # 方法1：通过href查找（最可靠）
+            login_link = driver.find_element(By.XPATH, "//a[@href='user.php' or contains(@href,'user.php') and not(contains(@href,'register')) and not(contains(@href,'affiliate'))]")
+            print("   找到登录链接（通过href）")
         except:
             try:
-                login_link = driver.find_element(By.PARTIAL_LINK_TEXT, "登录")
+                # 方法2：通过文本查找
+                login_link = driver.find_element(By.LINK_TEXT, "登录")
+                print("   找到登录链接（通过文本）")
             except:
                 try:
-                    login_link = driver.find_element(By.XPATH, "//a[contains(text(),'登录')]")
+                    # 方法3：通过部分文本查找
+                    login_link = driver.find_element(By.PARTIAL_LINK_TEXT, "登录")
+                    print("   找到登录链接（通过部分文本）")
                 except:
-                    # 可能需要在顶部区域查找
-                    login_link = driver.find_element(By.XPATH, "//div[@class='topNav']//a[contains(text(),'登录')]")
+                    # 方法4：查找所有链接，找到user.php的
+                    all_links = driver.find_elements(By.TAG_NAME, "a")
+                    for link in all_links:
+                        href = link.get_attribute("href")
+                        if href and "user.php" in href and "register" not in href and "affiliate" not in href:
+                            login_link = link
+                            print("   找到登录链接（通过遍历）")
+                            break
         
-        login_link.click()
-        print("   已点击登录按钮")
-        sleep(3)
-        
-        screenshot_path = os.path.join(screenshot_dir, "06_点击登录后.png")
-        driver.save_screenshot(screenshot_path)
-        print(f"   📸 已截屏保存: {screenshot_path}")
+        if login_link:
+            login_link.click()
+            print("   已点击登录按钮")
+            sleep(3)
+            
+            screenshot_path = os.path.join(screenshot_dir, "06_点击登录后.png")
+            driver.save_screenshot(screenshot_path)
+            print(f"   📸 已截屏保存: {screenshot_path}")
+            print(f"   当前URL: {driver.current_url}")
+        else:
+            print("   ⚠️ 未找到登录按钮，直接访问登录页")
+            driver.get("http://localhost/upload/user.php")
+            sleep(2)
+            screenshot_path = os.path.join(screenshot_dir, "06_点击登录后.png")
+            driver.save_screenshot(screenshot_path)
+            print(f"   📸 已截屏保存: {screenshot_path}")
     except Exception as e:
-        print(f"   未找到登录按钮: {e}")
-        print("   尝试直接访问前台登录页")
+        print(f"   查找登录按钮失败: {e}")
+        print("   直接访问前台登录页")
         driver.get("http://localhost/upload/user.php")
         sleep(2)
         screenshot_path = os.path.join(screenshot_dir, "06_点击登录后.png")

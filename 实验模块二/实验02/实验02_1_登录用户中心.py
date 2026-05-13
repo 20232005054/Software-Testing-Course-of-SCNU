@@ -61,7 +61,7 @@ try:
     user_info.click()
     
     # (10) 等待5秒
-    sleep(30)
+    sleep(5)
     
     print("✅ 实验02-1完成！成功登录并访问用户信息页面")
 

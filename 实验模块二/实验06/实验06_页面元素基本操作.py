@@ -192,7 +192,7 @@ except Exception as e:
     traceback.print_exc()
     
 finally:
-    print("\n按回车键关闭浏览器...")
-    input()
+    print("\n等待3秒后自动关闭浏览器...")
+    sleep(3)
     driver.quit()
     print("✅ 浏览器已关闭")

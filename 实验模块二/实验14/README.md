@@ -25,6 +25,18 @@
 1. ECShop系统已启动（http://localhost/upload/）
 2. Python环境已配置
 3. 已安装selenium和webdriver-manager
+4. **已安装ddddocr**（用于验证码识别）
+
+### 安装OCR库
+
+```bash
+# 方法1：使用批处理文件
+双击运行：安装OCR库.bat
+
+# 方法2：命令行安装
+cd 实验模块二\实验14
+..\..\venv\Scripts\pip.exe install ddddocr
+```
 
 ### 运行实验
 
@@ -32,6 +44,10 @@
 cd 实验模块二\实验14
 ..\..\venv\Scripts\python.exe 实验14_验证码测试.py
 ```
+
+**注意：**
+- 如果未安装ddddocr，脚本会使用占位符验证码（会导致提交失败）
+- 安装ddddocr后可以自动识别验证码
 
 ## 📝 实验步骤
 

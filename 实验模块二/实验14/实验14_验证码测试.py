@@ -76,7 +76,8 @@ try:
     captcha_text = None
     if ocr_available:
         try:
-            ocr = ddddocr.DdddOcr()
+            # show_ad=False 隐藏ddddocr的广告信息
+            ocr = ddddocr.DdddOcr(show_ad=False)
             with open(captcha_screenshot, "rb") as f:
                 image_bytes = f.read()
             captcha_text = ocr.classification(image_bytes)

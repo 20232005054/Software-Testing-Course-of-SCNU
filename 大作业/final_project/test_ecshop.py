@@ -291,35 +291,33 @@ try:
     print(f"   商品详情页URL: {driver.current_url}")
 
     # 步骤18：获取静态文本数据（商品名称和价格）并进行处理
-    # 使用多种回退策略，参考实验06从page_source提取数据的方式
+    # 基于实际DOM分析：商品名→<p class="f_l">, 价格→<font id="ECS_SHOPPRICE">
     print("\n[步骤18] 获取商品名称和价格静态文本，进行数据处理")
-    # 获取商品名称：优先h1，其次页面title，最后从源码找
+    # 获取商品名称：ECShop商品页无h1，商品名在 <p class="f_l">
     try:
-        goods_name = driver.find_element(By.XPATH, "//h1").text
+        goods_name = driver.find_element(By.XPATH, "//p[@class='f_l']").text
     except Exception:
         try:
-            goods_name = driver.find_element(
-                By.XPATH, "//*[@id='name' or contains(@class,'goodsName')]").text
+            goods_name = driver.find_element(By.XPATH, "//h1").text
         except Exception:
             goods_name = driver.title
     if not goods_name:
         goods_name = "（未获取到商品名）"
     print(f"   商品名称: {goods_name}")
-    # 获取价格文本：实验06使用过 class/id 选择器和page_source正则
+    # 获取价格：ECShop价格元素id明确——ECS_SHOPPRICE(本店售价)、ECS_GOODS_AMOUNT(总价)
     price_text = ""
-    try:
-        price_element = driver.find_element(By.XPATH,
-            "//*[contains(@class,'price') or contains(@id,'price') "
-            "or contains(@class,'shop_price')]")
-        price_text = price_element.text
-    except Exception:
-        pass
+    for price_id in ["ECS_SHOPPRICE", "ECS_GOODS_AMOUNT"]:
+        try:
+            price_text = driver.find_element(By.ID, price_id).text
+            if price_text:
+                break
+        except Exception:
+            continue
     if not price_text:
         try:
             price_text = driver.find_element(
                 By.XPATH, "//*[contains(text(),'￥') or contains(text(),'元')]").text
         except Exception:
-            # 最后回退：从页面源码正则提取
             match = re.search(r'￥(\d+(?:\.\d+)?)元?', driver.page_source)
             if match:
                 price_text = "￥" + match.group(1)

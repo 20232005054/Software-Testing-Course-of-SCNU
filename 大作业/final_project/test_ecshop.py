@@ -6,9 +6,9 @@
 #        消息框处理（确定/取消/截屏）、切换浏览器窗口和Frame、
 #        页面元素截屏操作、验证码获取操作
 # 时间：2026年6月
-# 作者：（填写姓名）
-# 学号：（填写学号）
-# 班级：（填写班级）
+# 作者：丁梓络
+# 学号：20232005054
+# 班级：软件工程1班
 # 版本：v1.0
 # 测试环境：Windows 11 + Python 3.x + Selenium 4.x + Chrome浏览器 + ChromeDriver（webdriver-manager自动管理）
 # 被测系统：ECShop V2.7.1（PHP + MySQL），部署在本地 localhost
